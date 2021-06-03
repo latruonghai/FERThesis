@@ -1,0 +1,4 @@
+name: flask_envs
+dependencies:
+  - python=3.8
+  
