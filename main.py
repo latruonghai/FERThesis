@@ -1,4 +1,8 @@
 import uvicorn
 
 if __name__ == "__main__":
-    uvicorn.run("app.backend.app:app", port=8000, reload=True)
+    uvicorn.run(
+        "app.backend.app:app",
+        host='192.168.0.103',
+        port=8000,
+        reload=True)
