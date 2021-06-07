@@ -41,9 +41,7 @@ def get_retrieval(
                 create_data(request=new_post, db=db)
 
         except(TypeError, IndexError):
-            data.delete(synchronize_session=False)
-            db.commit()
-            return RedirectResponse(f'/IR')
+            return TEMPLATE.TemplateResponse('query12.html', {'request': requests, "posts" : [query]})
 
         all_posts = data.filter(
             kw == Tourism.keyword).order_by(
@@ -67,6 +65,8 @@ def create_data(request, db):
 
 def render_all(request, db):
     all_data = db.query(Tourism).all()
+    if len(all_data) == 0:
+        return TEMPLATE.TemplateResponse("query.html", {"request": request})
     return TEMPLATE.TemplateResponse(
         "query.html", {
             "request": request, "posts": all_data})
@@ -86,3 +86,4 @@ def render(request, db, kw, times):
     return TEMPLATE.TemplateResponse(
         "query12.html", {
             "request": request, "posts": all_data, "time": round(end, 4)})
+

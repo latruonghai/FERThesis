@@ -6,3 +6,6 @@ from app.backend.core import TEMPLATE
 
 def render(image_path: str, request):
     return TEMPLATE.TemplateResponse(image_path, {"request": request})
+
+def segment_image():
+    pass

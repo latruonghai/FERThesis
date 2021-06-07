@@ -1,4 +1,3 @@
-import app.backend.db.respositories
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from app.backend.db.respositories import retrieval

@@ -1,0 +1,174 @@
+/*Body Part */
+.body-part{
+    height: 60%;
+    width: 100%;
+    padding: 0px;
+}
+
+.play-area{
+    height: 100%;
+    width: 50%;
+    transform: translateX(50%);
+    background-color: gainsboro;
+}
+.inbox-area{
+    width: 40%;
+    height: 94%;
+    display: flexbox;
+    background-color: darkgrey;
+}
+
+.msg-line{
+    
+}
+
+
+.inbox{
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block;
+    box-shadow: inset;
+}
+.chat-container{
+    font-size: medium;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+.ava{
+    width: 20%;
+    height: 100%;
+    margin-left: auto;
+    transform: translateX(200%);
+    margin-top: 3%;
+    display: block;
+    border-radius: 15px; 
+}
+.picture{
+    width: 100%;
+    height: 14%;
+}
+.item:nth-child(2n+1){
+    background-color: lightgreen !important;
+    padding-top: 1px;
+    margin-top: 5px;
+    position: absolute;
+    width: 45%;
+    float: left;
+}
+.item:nth-child(2n){
+    -moz-opacity: 0.4;
+    background-color: lightgreen;
+    position: initial;
+    width: auto;
+    margin-left: auto;
+    width: 45%;
+    /* float: right; */
+}
+
+/* Print Area */
+.print-box{
+    height: auto;
+    margin-top: 1px;
+    width: 100%;
+    display: inline-block;
+    border-radius: 15px;
+    border-width: 50px;
+    border-color: black;
+    background-color: inherit;
+}
+.user{
+    width: 50%;
+    margin-top: 5px;
+    background-color: greenyellow;
+    max-height: 100px;
+    text-align: center;
+    transform: translateX(50%);
+}
+.title{
+    font-size: 15px;
+    font-weight: bolder;
+}
+.txt{
+    font-size: 15px;
+    font-style: italic;
+    background-color: inherit;
+}
+.tool-boxes{
+    width: 25%;
+    height: 100%;
+    float:left
+}
+.option-area{
+    display: block;
+    height: 45%;
+    margin-top: 5px;
+    width: 100%;
+    border-radius: 10px;
+}
+#option-2{
+    height: 30%;
+}
+#option-3{
+    height: 20%;
+}
+.tool-region{
+    height: 15%;
+    width: 90%;
+    margin-top: 5px;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 10px;
+}
+.secret{
+    margin-top: 20px;
+}
+.tool-name{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 14px;
+    text-align: left;
+    font-weight: bolder;
+    margin-left: 10px;
+    float: left;
+}
+.input-text{
+    max-width: 40%;
+    float:left;
+    margin-left: 20px;
+    margin-top: 1px;
+    max-height: 70%;
+    border-radius: 7px;
+}
+#input-alice, #input-bob{
+    max-height: 23px;
+    position: relative;
+    transform: translateX(25%);
+}
+#letter-1{
+    margin-left: 20px;
+    float: left;
+}
+#input-base-x{
+    max-width: 15%;
+    margin-left: 5px;
+}
+#input-base-y{
+    max-width: 15%;
+    margin-left: 5px;
+}
+.letter{
+    float:left;
+    margin-left: 5px;
+}
+
+/* Button */
+
+#btn-compute, #btn-sim{
+    transform: translateX(100%);
+}
+#display-1{
+    height: 95%;
+    width: 95%;
+    margin-left: 2.5%;
+}
