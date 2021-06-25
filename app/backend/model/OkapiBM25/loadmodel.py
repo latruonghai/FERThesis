@@ -21,4 +21,6 @@ def load_model(file_path):
         iDex = pickle.load(f)
     return (files, f2t, iDex, dltable, dl, avgdl, idf)
 
+
+
 FILEPATH = load_model(file_path)

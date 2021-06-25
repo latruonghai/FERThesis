@@ -61,8 +61,8 @@ class Okapi(Query):
             if w not in st:
                 continue
             wc = len(self.iDex[w][filename])
-            score += self.idf[w] * ((wc) * (k + 1)) / (wc +
-                                                       k * (1 - b + b * self.dl[filename] / self.avgdl))
+            score += self.idf[w] * ((wc) * (k + 1)) / (wc + \
+                                    k * (1 - b + b * self.dl[filename] / self.avgdl))
         return score
 
     def BM25_score(self, st):
@@ -79,7 +79,7 @@ class Okapi(Query):
     def ranked_doc(self, st):
         total_score = self.BM25_score(st)
         ranked_docs = sorted(total_score.items(),
-                            key=lambda x: x[1], reverse=True)
+                             key=lambda x: x[1], reverse=True)
         return ranked_docs[:6]
 
     def letQuery(self, st):
@@ -110,7 +110,7 @@ class Okapi(Query):
                 temp_post['content'] = "".join(full_doc[2:])[:200] + '...'
             self.post.append(temp_post)
             self.name_files.append(name)
-
+        print("Post: {}\tName file {}".format(self.post, self.name_files))
         return self.post, self.name_files
 
 
