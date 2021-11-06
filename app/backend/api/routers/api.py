@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from . import images
+from . import fer
 
 router = APIRouter()
-router.include_router(images.router, tags=["Images"])
-#router.include_router(retrieval.router, tags=["IR"])
+router.include_router(fer.router, tags=["Recognition"])
+# router.include_router(images.router, tags=["Images"])
+# router.include_router(retrieval.router, tags=["IR"])
 #router.include_router(hellman.router, tags=["hellman"])
 
 @router.get("/")
