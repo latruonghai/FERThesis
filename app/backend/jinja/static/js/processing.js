@@ -1,19 +1,20 @@
 
 $(".upload_img").on("change",  ev =>{
-    var f = ev.target.files[0];
-    var fr = new FileReader();
+    const files = ev.target.files;
+    const formData = new FormData();
+    formData.append("myFile",files[0]);
 
-    fr.onload = ev2 =>{
-        var fileName = "../../static/image/image_before/" + f.name;
-        var doc = $("#picture_1");
-
-        var texts = $(".picture-name")
-        texts.attr("value", f.name);
-        doc.attr("src", fileName);
-        doc.attr("name", f.name);
-
-    };
-    fr.readAsDataURL(f);
+    fetch("/fer", {
+        method: "GET",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error =>{
+        console.error(error);
+    })
 })
 
 // function showImage(data){
