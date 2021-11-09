@@ -32,7 +32,9 @@ class DetectorModule:
         self.face_cascade = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.FL = face_lib()
-        self.set_params_FL(scoreThreshold=0.85, iouThreshold=0.7)
+        self.set_params_FL(
+            scoreThreshold=config["face_lib"]["scoreThreshold"],
+            iouThreshold=config["face_lib"]["iouThreshold"])
         self.net = self._get_base_detector(config)
 
     def set_params_FL(self, scoreThreshold=0.85, iouThreshold=0.7):

@@ -51,7 +51,7 @@ class Segmentation():
             mask = 0
             # image = cv2.drawContours(predict, contours, -1, (0, 255, 0), 2)
             # y_tru.append(y_true)
-            return name + ".jpg"
+            # return name + ".jpg"
         else:
             # if the sum of pixel values are more than 0, then there is tumour
             # image_id.append(i)
@@ -60,8 +60,11 @@ class Segmentation():
             mask = 1
             predict = predict.round().astype(int)
             predict[predict != 0] = 255
+            # print("Predict", predict.shape)
             cv2.imwrite("temp.jpg", predict)
+            predict = cv2.cvtColor(predict, cv2.COLOR)
             predict = cv2.imread("temp.jpg", cv2.IMREAD_GRAYSCALE)
+            # print(predict.shape)
             # predict = cv2.cvtColor(predict, cv2.COLOR_RGB2GRAY)
             th, im_th = cv2.threshold(predict, 200, 255, cv2.THRESH_BINARY_INV)
 

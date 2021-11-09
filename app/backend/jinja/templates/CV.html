@@ -1,62 +1,77 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block head %}
+<title>Computer Vision Project</title>
+<link rel="stylesheet" type="text/css" href="/static/css/top.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/body1.css" />
+<link
+  rel="shortcut icon"
+  href="/static/image/favicon.ico"
+  type="/image/x-icon"
+/>
+<link rel="icon" href="/static/image/favicon.ico" type="image/x-icon" />
 
-{% block head %}
-    <title>Computer Vision Project</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/top.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/body1.css">
-    <link rel="shortcut icon" href="/static/image/favicon.ico" type="/image/x-icon">
-		<link rel="icon" href="/static/image/favicon.ico" type="image/x-icon">
-		
-{% endblock %}
-
-{% block body %}
+{% endblock %} {% block body %}
 
 <!-- Body part -->
-<div class = "body-part">
-    <div class = "insert-picture">
-        <div class = "insert-container">
-            <form >
-                <input class="picture-name" type="text-name" name="" placeholder="Your Picture">
-                <input type="file" class ="upload_img" name="upload">
-            </form>
-            
-        </div>
+<div class="body-part">
+  <div class="insert-picture">
+    <div class="insert-container">
+      <form>
+        <input
+          class="picture-name"
+          type="text-name"
+          name=""
+          placeholder="Your Picture"
+        />
+        <input type="file" class="upload_img" name="upload" />
+      </form>
     </div>
-    <div class = "picture">
-        <div class = "picture container">
-            <div class="title-picture" id="picture-1">
-                <h1>Picture 1</h1>
-            </div>
-            <div class = "picture-infor">
-                <div class ="picture-show clearfix">
-                    <img type = "image/jpg" negavtive="yes" class = "inline-picture" src="../static/image/anh_goc1.jpg" alt="Don't have picture" id ="picture_1">
-                </div>
-            </div>
+  </div>
+  <div class="picture">
+    <div class="picture container">
+      <div class="title-picture" id="picture-1">
+        <h1>Brain Tumor MRI</h1>
+      </div>
+      <div class="picture-infor">
+        <div class="picture-show clearfix">
+          <img
+            type="image/jpg"
+            negavtive="yes"
+            class="inline-picture"
+            src="../static/image/anh_goc1.jpg"
+            alt="Don't have picture"
+            id="picture_1"
+          />
         </div>
-        <div class = "transport">
-            <div class = "btn-block">
-                <div class = "transport-block">
-                    <div class = "btn">
-                        <button class = "btn-transport" name ="CV">
-                            <!-- <i class="ion-android-arrow-forward"></i> -->
-                            Predict
-                        </button>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class = "picture container">
-            <div class="title-picture" id="picture-2">
-                <h1>Brain Tumor MRI</h1>
-            </div>
-            <div class = "picture-infor">
-                <div class = "picture-show clearfix">
-                    <img class = "inline-picture" id = "picture_2" src="" alt="Don't have picture">
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="transport">
+      <div class="btn-block">
+        <div class="transport-block">
+          <div class="btn">
+            <button class="btn-transport" name="CV">
+              <!-- <i class="ion-android-arrow-forward"></i> -->
+              Predict
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="picture container">
+      <div class="title-picture" id="picture-2">
+        <h1>Predicted</h1>
+      </div>
+      <div class="picture-infor">
+        <div class="picture-show clearfix">
+          <img
+            class="inline-picture"
+            id="picture_2"
+            src=""
+            alt="Don't have picture"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- <script src="static/js/jquery-3.6.0.slim.min.js" type="text/javascript"></script> -->
 <script src="../static/js/jquery.min.js" type="text/javascript"></script>
@@ -70,7 +85,7 @@
 		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous">
 	</script> -->
 <script src="../static/js/script.js"></script>
-	<!-- <script src="../static/js/script.js"></script> -->
+<!-- <script src="../static/js/script.js"></script> -->
 <script src="../static/js/query.js"></script>
 <script src="../static/js/processing.js"></script>
 
