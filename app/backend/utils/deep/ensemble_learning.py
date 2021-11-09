@@ -4,8 +4,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from numpy import dstack
-from keras.metrics import Accuracy
-from .validation import f1_m
+# from keras.metrics import Accuracy
+# from .validation import f1_m
 import pickle
 
 class EnsembleModel:
@@ -13,16 +13,17 @@ class EnsembleModel:
         n_models_path = config["deep_model_path"]
         print(n_models_path)
         meta_model_path = config["meta_model_path"]
-        self.dependencies = {"accuracy": Accuracy, "f1_m": f1_m}
+        self.dependencies = config["dependencies"]
         self.members = self.load_all_models(n_models_path)
-
+        
         self.model = self.load_meta_model(meta_model_path)
         print(f'Load {len(self.members)} Deep models')
-
+        
+        
     def load_all_models(self, n_models_path):
         all_models = list()
         for path in n_models_path:
-            #             print(path)
+#             print(path)
             # Specify the filename
             # filename = '/content/model' + str(i + 1) + '.h5'
             # load the model
@@ -35,17 +36,15 @@ class EnsembleModel:
             all_models.append(model)
             print('>loaded %s' % path)
         return all_models
-
     def load_meta_model(self, meta_model_path):
-        #         print(meta_model_path)
+#         print(meta_model_path)
         with open(meta_model_path, 'rb') as f:
             model_ = pickle.load(f)
-        print(model_)
         print("Meta Model Was Loaded")
 #         print(str(model_))
         return model_
-
-    def stacked_dataset(self, inputX):
+    
+    def stacked_dataset(self,inputX):
         stackX = None
         for model in self.members:
             # make prediction
@@ -56,11 +55,11 @@ class EnsembleModel:
             else:
                 stackX = dstack((stackX, yhat))
         # flatten predictions to [rows, members x probabilities]
-        stackX = stackX.reshape(
-            (stackX.shape[0], stackX.shape[1] * stackX.shape[2]))
+        stackX = stackX.reshape((stackX.shape[0], stackX.shape[1] * stackX.shape[2]))
         return stackX
 
     # Fit a model based on the outputs from the ensemble members
+
 
     def fit_stacked_model(self, inputX, inputy):
         if not self.model:
@@ -78,7 +77,7 @@ class EnsembleModel:
         else:
             print("Model was created")
 #         return model
-
+    
     def stacked_prediction(self, inputX):
         # create dataset using ensemble
         stackedX = self.stacked_dataset(inputX)
@@ -92,6 +91,7 @@ class EnsembleModel:
         # probabilities = np.array(list(map(predict_prob, yhat)))
         # print(probabilities)
         return yhat, np.round(np.max(pred, axis=1) * 100, 2)[0]
+
 
     # Evaluate model on test set
 
