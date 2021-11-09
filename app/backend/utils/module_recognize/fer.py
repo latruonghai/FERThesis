@@ -8,7 +8,7 @@ from PIL import Image
 from io import BytesIO
 from app.backend.utils.face_detect.detector import DetectorModule
 from app.backend.utils.deep.ensemble_learning import EnsembleModel
-from app.backend.utils.data_process.labels import TranslateLabel
+
 
 class FER:
 
@@ -19,7 +19,7 @@ class FER:
         self.enmodel = EnsembleModel(config)
         if validate:
             self.trans = TranslateLabel(config)
-            # self.label_process = LabelProcessing()
+            self.label_process = LabelProcessing()
 #             self.validate = validate
 
     def set_params_FL(self, scoreThreshold=0.85, iouThreshold=0.7):
@@ -173,7 +173,7 @@ class FER:
             img_path,
             show=True,
             gpu=1,
-            save=True,
+            save=False,
             quiet=True):
         if gpu == 1 and not quiet:
             print("You are using gpu")
@@ -213,7 +213,6 @@ class FER:
 #             print(label)
             label = self.trans.translate(str(label))
             y_pred.append(label)
-            
         print(f"Y True: {y_true} and length {len(y_true)}")
         print(f'Y Pred: {y_pred} and length {len(y_pred)}')
 
