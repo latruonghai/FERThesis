@@ -8,24 +8,19 @@ from PIL import Image
 from io import BytesIO
 from app.backend.utils.face_detect.detector import DetectorModule
 from app.backend.utils.deep.ensemble_learning import EnsembleModel
-
-
-
+from app.backend.utils.data_process.labels import TranslateLabel
 
 class FER:
 
-    def __init__(self, config):
+    def __init__(self, config, validate=False):
 
-        self.labels = [
-            'Angry',
-            'Disgust',
-            'Fear',
-            'Happy',
-            'Neutral',
-            'Sad',
-            'Surprise']
+        self.labels = config["labels"]
         self.detector_module = DetectorModule(config)
         self.enmodel = EnsembleModel(config)
+        if validate:
+            self.trans = TranslateLabel(config)
+            # self.label_process = LabelProcessing()
+#             self.validate = validate
 
     def set_params_FL(self, scoreThreshold=0.85, iouThreshold=0.7):
 
@@ -46,19 +41,8 @@ class FER:
                 (x, y, x1, y1) = box.astype("int")
                 face_image = img_new[y:y1, x:x1]
                 cv2.rectangle(img, (x, y), (x1, y1), (0, 0, 255), 2)
-                try:
-                    face_image = cv2.resize(face_image, (48, 48))
-                    face_image = face_image / 127.5
-                    face_image -= 1
-                    face_image = np.expand_dims(np.array([face_image]), -1)
-                except BaseException:
-                    continue
-                start = time.time()
-                pred_label, pred_score = self.enmodel.stacked_prediction(
-                    face_image)
-
-    #             print(f'Predict in {time.time()-start}s')
-                label = self.labels[pred_label[0]]
+#
+                label, end2, pred_score = self.predict_face_emotion(face_image)
                 cv2.putText(
                     img,
                     f'{label}: {pred_score}',
@@ -70,11 +54,11 @@ class FER:
                      191,
                      163),
                     2)
-                end2 = time.time() - start
+#                 end2 = time.time() - start
             else:
                 continue
 #         print(img.shape)
-        return img, end, end2
+        return img, end, end2, label
 
     def face_recognition_with_face_lib(self, image, quiet=True):
         #         print("use lib")
@@ -91,14 +75,8 @@ class FER:
                 #                 print(x,y,w,h)
                 face_image = img_new[y:y + h, x:x + w]
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-                face_image = cv2.resize(face_image, (48, 48))
-                face_image = face_image / 127.5
-                face_image -= 1
-                face_image = np.expand_dims(np.array([face_image]), -1)
-                start = time.time()
-                pred, score = self.enmodel.stacked_prediction(face_image)
-                #             print(f'Predict in {time.time()-start}s')
-                label = self.labels[pred[0]]
+
+                label, end2, score = self.predict_face_emotion(face_image)
                 cv2.putText(
                     image,
                     f'{label}:{score}',
@@ -110,10 +88,10 @@ class FER:
                      103,
                      90),
                     2)
-                end2 = time.time() - start
+#                 end2 = time.time() - start
         else:
             raise BaseException("There are no face's detected")
-        return image, end, end2
+        return image, end, end2, label
 
     def face_recognition_with_cpu(self, image, quiet=False):
         # Face detection with haarcascade
@@ -130,14 +108,9 @@ class FER:
             for x, y, w, h in faces:
                 face_image = img_new[y:y + h, x:x + w]
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-                face_image = cv2.resize(face_image, (48, 48))
-                face_image = face_image / 127.5
-                face_image -= 1
-                face_image = np.expand_dims(np.array([face_image]), -1)
-                start = time.time()
-                pred, score = self.enmodel.stacked_prediction(face_image)
-    #             print(f'Predict in {time.time()-start}s')
-                label = self.labels[pred[0]]
+
+                label, end2, score = self.predict_face_emotion(face_image)
+#                 print(label)
                 cv2.putText(
                     image,
                     f'{label}:{score}',
@@ -149,11 +122,23 @@ class FER:
                      153,
                      67),
                     2)
-                end2 = time.time() - start
 
         else:
             raise BaseException("There are no face's detected")
-        return image, end, end2
+        return image, end, end2, label
+
+    def predict_face_emotion(self, face_image):
+        face_image = cv2.resize(face_image, (48, 48))
+        face_image = face_image / 127.5
+        face_image -= 1
+        face_image = np.expand_dims(np.array([face_image]), -1)
+        start = time.time()
+        pred, score = self.enmodel.stacked_prediction(face_image)
+    #             print(f'Predict in {time.time()-start}s')
+        label = self.labels[pred[0]]
+#         print(label)
+        end2 = time.time() - start
+        return label, end2, score
 
     def processing_image(self, img, gpu=1, quiet=False, resize=True):
         #     img = cv2.imread(path_image)
@@ -163,19 +148,19 @@ class FER:
             img = cv2.resize(img, (400, 400 * img.shape[0] // img.shape[1]))
         try:
             if gpu == 1:
-                face_image, end, end2 = self.face_recognition_with_gpu(
+                face_image, end, end2, label = self.face_recognition_with_gpu(
                     img, quiet)
             elif gpu == 0:
-                face_image, end, end2 = self.face_recognition_with_cpu(
+                face_image, end, end2, label = self.face_recognition_with_cpu(
                     img, quiet)
             else:
-                face_image, end, end2 = self.face_recognition_with_face_lib(
+                face_image, end, end2, label = self.face_recognition_with_face_lib(
                     img, quiet)
 
-            return face_image, end, end2
-        except BaseException as er:
-            print("Error:", er)
-            return img, None, None  # cv2_imshow(img)
+            return (face_image, end, end2, label)
+        except BaseException as ex:
+            print(ex)
+            return img, None, None, None  # cv2_imshow(img)
 
     def save_img(self, face, file_name="temp.jpg"):
         file_name = file_name.split('.')[0]
@@ -183,22 +168,75 @@ class FER:
         cv2.imwrite(path_save, face)
         print(f'You saved images to the path {path_save}')
 
-    def detect_emotion_with_image(self, img_path, gpu=1, save=False, show=False):
-        if gpu == 1:
+    def detect_emotion_with_image(
+            self,
+            img_path,
+            show=True,
+            gpu=1,
+            save=True,
+            quiet=True):
+        if gpu == 1 and not quiet:
             print("You are using gpu")
-        elif gpu == 0:
+        elif gpu == 0 and not quiet:
             print("You are using cpu")
-        else:
+        elif gpu == -1 and not quiet:
             print("You are using Face Lib")
-        face, _, __ = self.processing_image(img_path, gpu)
+        face, _, __, label = self.processing_image(img_path, gpu, quiet)
         if show:
             cv2.imshow("Frame", face)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         if save:
             self.save_img(face, img_path)
+
+        return face, label
+
+    def detect_emotion_with_list_images(
+            self,
+            root_folder=".",
+            show=False,
+            gpu=1,
+            validate=False,
+            quiet=True,
+            save=False):
+        y_true, y_pred = [], []
+
+        for image_path in os.listdir(root_folder):
+            if image_path == ".ipynb_checkpoints":
+                continue
+            name = image_path.split(".")[0].split("-")[0]
+            full_path = os.path.join(root_folder, image_path)
+#             print(full_path)
+            y_true.append(self.trans.translate(str(name)))
+            face, label = self.detect_emotion_with_image(
+                full_path, gpu=gpu, show=show, save=save, quiet=quiet)
+#             print(label)
+            label = self.trans.translate(str(label))
+            y_pred.append(label)
             
-        return face
+        print(f"Y True: {y_true} and length {len(y_true)}")
+        print(f'Y Pred: {y_pred} and length {len(y_pred)}')
+
+        if validate:
+            val = self.validate(y_true, y_pred)
+            print(f"Accuracy: {round(val*100,2)}%")
+
+            return (val, y_pred)
+        else:
+            return y_pred
+
+        print("Done")
+
+    def validate(self, y_true, y_pred):
+        #         y_true_score = self.label_process.label_one_hot_encode(y_true)
+        #         y_pred_score = self.label_process.label_one_hot_encode(y_pred)
+        y_true_score = np.array(y_true)
+        y_pred_score = np.array(y_pred)
+        score = Accuracy()
+        score.update_state(y_pred_score, y_true_score)
+
+#         print(score.result().numpy())
+        return score.result().numpy()
 
     def detect_emotion_with_vid(self, vid_path=0, gpu=True, quiet=True):
         if gpu == 1:
@@ -223,7 +261,7 @@ class FER:
                     frame, (400, 400 * frame.shape[0] // frame.shape[1]))
                 # Display the resulting frame
                 try:
-                    face_emotion, end, end2 = self.processing_image(
+                    face_emotion, end, end2, label = self.processing_image(
                         frame, gpu, quiet, resize=False)
 #                     print(end, end2)
                     frame = face_emotion
@@ -283,6 +321,7 @@ class FER:
         fps = str(int(np.ceil(fps)))
 
         return fps
+
 
 def read_image_from_byte(image_data) -> Image.Image:
     image = Image.open(BytesIO(image_data))
