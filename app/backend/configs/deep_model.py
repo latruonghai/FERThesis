@@ -4,9 +4,9 @@ config_model = {
     "caffe_path": "app/backend/model/face/res10_300x300_ssd_iter_140000.caffemodel",
     "config_path": "app/backend/model/face/deploy.prototxt.txt",
     "deep_model_path": [
-        "app/backend/model/model_new_last/model_last_vgg16-0.hdf5",
-        "app/backend/model/model_new_last/_CNN.21-0.69.hdf5"],
-    "meta_model_path": "app/backend/model/model_new_last/model_last_2_model_SVC_nohist_0.7200000286102295.pkl",
+        "app/backend/model/deep_model/new_model_96/model_last_CNN-100-70.hdf5",
+        "app/backend/model/deep_model/new_model_96/model_last_model_3-100-70.hdf5"],
+    "meta_model_path": "app/backend/model/deep_model/new_model_96/model_last_2_model_SVC_nohist.pkl",
     "dictionary": {
         "Angry": 0,
         "Disgust": 1,
