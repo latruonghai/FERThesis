@@ -19,17 +19,18 @@ fer = FER(config_model)
 
 
 def detect_face_with_image(file: FERRequest):
-    
+
     image = decode_image(file.file)
-    
-    img, dic_face = fer.detect_emotion_with_image(image, gpu=int(file.gpu), show=bool(file.show))
+
+    img, dic_face = fer.detect_emotion_with_image(
+        image, gpu=int(file.gpu), show=bool(file.show))
     # print(dic_face)
     imgcode = encode_image(img)
 
     return JSONResponse(
         {
             "header": "Content-type: application/json",
-            "body": {"state": 1 if dic_face else 0 ,"image":str(imgcode), "dict_face": dic_face}
-        }
-    )
-    
+            "body": {
+                "state": 1 if dic_face else 0,
+                "image": str(imgcode),
+                "dict_face": dic_face}})
