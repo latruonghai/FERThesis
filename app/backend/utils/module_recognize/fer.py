@@ -2,12 +2,18 @@
 # from app.backend.utils.face_detect import DetectorModule
 # from app.backend.utils.deep import EnsembleModel
 import cv2
+import io
 import numpy as np
 import time
 from PIL import Image
 from io import BytesIO
 from app.backend.utils.face_detect.detector import DetectorModule
 from app.backend.utils.deep.ensemble_learning import EnsembleModel
+import base64
+from cv2 import COLOR_BGR2RGB, COLOR_RGB2BGR, cvtColor
+from app.backend.utils.exceptions.detect_exception import NotFoundFaceImageError
+
+
 
 
 class FER:
@@ -26,8 +32,12 @@ class FER:
         
         self.detector_module.set_params_FL(scoreThreshold, iouThreshold)
 
+    def __set_dict_information__(self, **kwargs):
+        return dict(kwargs)
+    
     def face_recognition_with_gpu(self, img, quiet=True, size=(96, 96) ):
         # Face detection with dnn
+        dic_face ={}
         start = time.time()
         faces, h, w = self.detector_module.detect_face(img, gpu=1)
         end = time.time() - start
@@ -37,44 +47,59 @@ class FER:
         for i in range(faces.shape[2]):
             confidence = faces[0, 0, i, 2]
             if confidence > 0.5:
+
+                
                 box = faces[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (x, y, x1, y1) = box.astype("int")
+                x, y, x1, y1 = map(int, [x, y, x1, y1])
                 face_image = img_new[y:y1, x:x1]
                 cv2.rectangle(img, (x, y), (x1, y1), (0, 0, 255), 2)
 #               
                 label, end2, pred_score = self.predict_face_emotion(face_image, size)
                 cv2.putText(img, f'{label}: {pred_score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(250,191,163) , 2)
 #                 end2 = time.time() - start
+                dic_face[i] = self.__set_dict_information__(
+                    x=x, y=y, x1=x1, y1=y1,
+                    emotion=label, confidence=int(pred_score), time_predict=end2+end
+                )
             else:
                 continue
+        if not dic_face:
+            raise NotFoundFaceImageError()
 #         print(img.shape)
-        return img, end, end2, label
+        return img, dic_face
 
     def face_recognition_with_face_lib(self, image, quiet=True, size=(96, 96) ):
 #         print("use lib")
+        dic_face = dict()
         img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         start = time.time()
         no_of_faces, faces_coors = self.detector_module.detect_face(image, gpu=-1)
         end = time.time() - start
         if not quiet:
             print(f"Face Lib Detected in {end}s")
-        if no_of_faces >0:
+        if no_of_faces > 0:
 #             print(no_of_faces)
-            for x, y, w, h in faces_coors:
+            for i, coordinate in enumerate(faces_coors):
 #                 print(x,y,w,h)
+                x, y, w, h = map(int, coordinate)
                 face_image = img_new[y:y + h, x:x + w]
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
                 label, end2, score = self.predict_face_emotion(face_image, size)
                 cv2.putText(image, f'{label}:{score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (216,103,90), 2)
 #                 end2 = time.time() - start
+                dic_face[i] = self.__set_dict_information__(
+                    x=x, y=y, x1=x+w, y1=y+h,
+                    emotion=label, confidence=int(score), time_predict=end2+end
+                )
         else:
-            raise BaseException("There are no face's detected")
-        return image, end, end2, label
+            raise NotFoundFaceImageError()
+        return image, dic_face
     
     def face_recognition_with_cpu(self, image, quiet = False, size=(96, 96) ):
         # Face detection with haarcascade
-
+        dic_face = dict()
         img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         img_new = cv2.equalizeHist(img_new)
         start = time.time()
@@ -84,18 +109,22 @@ class FER:
             print(f"CPU Detected in {end}s")
         # img_new=Nonez
         if len(faces) > 0:
-            for x, y, w, h in faces:
+            for i, coordinate in enumerate(faces):
+                x, y, w, h = map(int, coordinate)
                 face_image = img_new[y:y + h, x:x + w]
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
                 label, end2, score = self.predict_face_emotion(face_image, size)
 #                 print(label)
                 cv2.putText(image, f'{label}:{score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (225,153,67), 2)
-                
+                dic_face[i] = self.__set_dict_information__(
+                    x=x, y=y, x1=x+w, y1=y+h,
+                    emotion=label, confidence=int(score), time_predict=end2+end
+                )
 
         else:
-            raise BaseException("There are no face's detected")
-        return image, end, end2, label
+            raise NotFoundFaceImageError()
+        return image, dic_face
     
     def predict_face_emotion(self, face_image, size):
         
@@ -120,16 +149,16 @@ class FER:
             img = cv2.resize(img, (400, 400 * img.shape[0] // img.shape[1]))
         try:
             if gpu ==1:
-                face_image, end, end2, label = self.face_recognition_with_gpu(img, quiet, size)
+                face_image, dic_face = self.face_recognition_with_gpu(img, quiet, size)
             elif gpu ==0:
-                face_image, end, end2, label = self.face_recognition_with_cpu(img, quiet, size)
+                face_image, dic_face = self.face_recognition_with_cpu(img, quiet, size)
             else:
-                face_image, end, end2, label = self.face_recognition_with_face_lib(img, quiet, size)
+                face_image, dic_face = self.face_recognition_with_face_lib(img, quiet, size)
                 
-            return (face_image, end, end2, label)
-        except BaseException as ex:
-            print(ex)
-            return img, None, None, None # cv2_imshow(img)
+            return (face_image, dic_face)
+        except NotFoundFaceImageError:
+            # print(ex)
+            return img, {} # cv2_imshow(img)
         
     def save_img(self, face, file_name="temp.jpg"):
         file_name = file_name.split('.')[0]
@@ -144,7 +173,8 @@ class FER:
             print("You are using cpu")
         elif gpu == -1 and not quiet:
             print("You are using Face Lib")
-        face, _, __, label = self.processing_image(img_path, gpu, quiet, size=size)
+        face, dict_face = self.processing_image(img_path, gpu, quiet, size=size)
+        
         if show:
             cv2.imshow("Frame", face)
             cv2.waitKey(0)
@@ -152,7 +182,7 @@ class FER:
         if save:
             self.save_img(face, img_path)
         
-        return face, label
+        return face, dict_face
     
     def detect_emotion_with_list_images(self, root_folder=".", show=False, gpu=1, validate=False, quiet=True, save=False, size=(96, 96)):
         y_true, y_pred = [], []
@@ -255,4 +285,38 @@ class FER:
 
 def read_image_from_byte(image_data) -> Image.Image:
     image = Image.open(BytesIO(image_data))
+    
     return image
+
+
+def decode_image(imgString):
+    imgdata = base64.b64decode(imgString)
+    image = read_image_from_byte(imgdata)
+    
+    image = np.array(image)
+    return cvtColor(image, COLOR_RGB2BGR)
+
+def convert_image_to_byte(img):
+    img = cvtColor(img, COLOR_BGR2RGB)
+    
+    return image_to_byte_array(Image.fromarray(img.astype('uint8')))
+
+def encode_image(img):
+    im = convert_image_to_byte(img)
+    
+    byte_image = base64.b64encode(im)
+    
+    return image_response(byte_image)
+
+def image_response(byte_image: bytes):
+    send_image = byte_image.decode("UTF-8")
+    
+    return send_image
+
+def image_to_byte_array(image: Image):
+    
+    imgByteArr = io.BytesIO()
+    image.save(imgByteArr, format="PNG")
+    imgByteArr = imgByteArr.getvalue()
+    
+    return imgByteArr

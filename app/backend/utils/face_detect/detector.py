@@ -1,5 +1,6 @@
 import cv2
 from face_lib import face_lib
+# from app.backend.utils.exceptions.detect_exception import NotFoundFaceImage
 
 
 class DetectorModule:
