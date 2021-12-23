@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Integer, Text
 from .. import Base
+from pydantic import BaseModel
 
 
 class Tourism(Base):
@@ -11,5 +12,11 @@ class Tourism(Base):
     content = Column(Text, nullable=False)
     source = Column(String(300), nullable=False)
 
+
+class Image(BaseModel):
+    gpu: str
+    show: bool
+    file: str
+    
 if __name__ == "__main__":
     pass
