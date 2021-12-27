@@ -4,6 +4,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from numpy import dstack
+import time
 # from keras.metrics import Accuracy
 # from .validation import f1_m
 import pickle
@@ -80,17 +81,19 @@ class EnsembleModel:
     
     def stacked_prediction(self, inputX):
         # create dataset using ensemble
+        start = time.time()
         stackedX = self.stacked_dataset(inputX)
         # make a prediction
         # model.probability=True
         pred = self.model.predict_proba(stackedX)
+        end = time.time() - start
     #     print("Probs:", pred)
         yhat = np.argmax(pred, axis=1)
         # print()
     #     print(yhat)
         # probabilities = np.array(list(map(predict_prob, yhat)))
         # print(probabilities)
-        return yhat, np.round(np.max(pred, axis=1) * 100, 2)[0]
+        return yhat, np.round(np.max(pred, axis=1) * 100, 2)[0], end
 
 
     # Evaluate model on test set

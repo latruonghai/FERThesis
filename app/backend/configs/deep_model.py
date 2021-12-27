@@ -20,7 +20,7 @@ config_model = {
     "labels": ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral'],
     "dependencies": dependencies,
     "face_lib":{
-        "scoreThreshold": 0.5,
-        "iouThreshold": 0.9,
+        "scoreThreshold": 0.4,
+        "iouThreshold": 0.4,
     }
 }

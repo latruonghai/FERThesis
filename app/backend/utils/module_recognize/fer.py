@@ -12,7 +12,7 @@ from app.backend.utils.deep.ensemble_learning import EnsembleModel
 import base64
 from cv2 import COLOR_BGR2RGB, COLOR_RGB2BGR, cvtColor
 from app.backend.utils.exceptions.detect_exception import NotFoundFaceImageError
-
+# from app.backend.utils.module_recognize.fer import encode_image
 
 
 
@@ -60,7 +60,8 @@ class FER:
 #                 end2 = time.time() - start
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x1, y1=y1,
-                    emotion=label, confidence=int(pred_score), time_predict=end2+end
+                    emotion=label, confidence=int(pred_score), time_predict=end2 + end,
+                    face_encode="data:image/jpeg;base64," + encode_image(face_image)
                 )
             else:
                 continue
@@ -91,7 +92,8 @@ class FER:
 #                 end2 = time.time() - start
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x+w, y1=y+h,
-                    emotion=label, confidence=int(score), time_predict=end2+end
+                    emotion=label, confidence=int(score), time_predict=end2+end,
+                    face_encode= "data:image/jpeg;base64," + encode_image(face_image)
                 )
         else:
             raise NotFoundFaceImageError()
@@ -101,7 +103,7 @@ class FER:
         # Face detection with haarcascade
         dic_face = dict()
         img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        img_new = cv2.equalizeHist(img_new)
+        # img_new = cv2.equalizeHist(img_new)
         start = time.time()
         faces = self.detector_module.detect_face(img_new, gpu=0)
         end = time.time() - start
@@ -119,7 +121,8 @@ class FER:
                 cv2.putText(image, f'{label}:{score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (225,153,67), 2)
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x+w, y1=y+h,
-                    emotion=label, confidence=int(score), time_predict=end2+end
+                    emotion=label, confidence=int(score), time_predict=end2+end,
+                    face_encode="data:image/jpeg;base64," + encode_image(face_image)
                 )
 
         else:
@@ -133,12 +136,12 @@ class FER:
         face_image = face_image / 127.5
         face_image -= 1
         face_image = np.expand_dims(np.array([face_image]), -1)
-        start = time.time()
-        pred, score = self.enmodel.stacked_prediction(face_image)
+        # start = time.time()
+        pred, score, end2 = self.enmodel.stacked_prediction(face_image)
     #             print(f'Predict in {time.time()-start}s')
         label = self.labels[pred[0]]
 #         print(label)
-        end2 = time.time() - start
+        # end2 = time.time() - start
         return label, end2, score
     
     def processing_image(self, img, gpu=1, quiet=False, resize = True, size=(96, 96)):
