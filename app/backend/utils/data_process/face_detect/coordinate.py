@@ -1,4 +1,7 @@
 class Coordinate:
+    """
+    Cooordinate Class to define cooordinate included in its attributes
+    """
     def __init__(self, x, y, w, h):
         self.x = x
         self.y = y
@@ -8,10 +11,23 @@ class Coordinate:
         self.wide = x + w
 
     def get_coordinate(self):
+        """[summary]
+        """
         return(self.x, self.y, self.wide, self.length)
 
 
 def _calculate(eye_list):
+    """[summary]
+
+    Args:
+        eye_list ([type]): [description]
+
+    Raises:
+        Exception: [description]
+
+    Returns:
+        [type]: [description]
+    """
     if len(eye_list) < 2:
         raise Exception("There should be 2 eyes, but have {} eyes detected".format(len(eye_list)))
     else:
@@ -21,4 +37,12 @@ def _calculate(eye_list):
 
 
 def _get_coord(coord):
+    """[summary]
+
+    Args:
+        coord ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     return coord.get_coordinate()

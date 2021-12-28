@@ -3,18 +3,34 @@ import os
 
 
 class ConvertJson:
+    """[summary]
+    """
     def __init__(self, path):
         self.dic = None
         self.path = path
 
-    def get_name_list(self, url_name, os_name="linux"):
+    def get_name_list(self, url_name: str, os_name="linux"):
+        """[summary]
+
+        Args:
+            url_name (str): [description]
+            os_name (str, optional): [description]. Defaults to "linux".
+
+        Returns:
+            [type]: [description]
+        """
         #         print(url_name)
         return url_name.split("/")
-
+    
     def read_image_from_folder(self):
         pass
 
     def to_json(self, name_file="temp.json"):
+        """[summary]
+
+        Args:
+            name_file (str, optional): [description]. Defaults to "temp.json".
+        """
         self.read_image_from_folder()
         with open(name_file, "w") as file:
             json.dump(self.dic, file)
@@ -31,7 +47,17 @@ class ConvertJson:
 
 
 class ConvertJsonJaffe(ConvertJson):
+    """[summary]
+
+    Args:
+        ConvertJson ([type]): [description]
+    """
     def __init__(self, path):
+        """[summary]
+
+        Args:
+            path ([type]): [description]
+        """
         super().__init__(path)
         self.dic = {}
         self.kw = {
@@ -43,14 +69,37 @@ class ConvertJsonJaffe(ConvertJson):
             "SA": "sad",
             "SU": "surprised"}
 
-    def __get_name_of_file___(self, file_name, index=0):
+    def __get_name_of_file___(self, file_name:str, index=0):
+        """[summary]
+
+        Args:
+            file_name (str): [description]
+            index (int, optional): [description]. Defaults to 0.
+
+        Returns:
+            [type]: [description]
+        """
         return file_name.split(".")[index]
 
-    def __get_keywords__(self, file_name):
+    def __get_keywords__(self, file_name: str):
+        """[summary]
+
+        Args:
+            file_name (str): [description]
+
+        Returns:
+            [type]: [description]
+        """
         kws = self.__get_name_of_file___(file_name, index=1)[0:2]
         return self.kw[kws]
 
-    def get_properties_from_kw(self, key, value):
+    def get_properties_from_kw(self, key: str, value):
+        """[summary]
+
+        Args:
+            key (str): [description]
+            value ([type]): [description]
+        """
         try:
             self.dic[key].append(value)
         except BaseException:
@@ -58,6 +107,8 @@ class ConvertJsonJaffe(ConvertJson):
             self.dic[key].append(value)
 
     def read_image_from_folder(self):
+        """[summary]
+        """
         self.dic = {}
 #         print("Hello")
 #         print(self.path)
@@ -69,11 +120,22 @@ class ConvertJsonJaffe(ConvertJson):
 
 
 class ConvertJsonFER(ConvertJson):
+    """[summary]
 
+    Args:
+        ConvertJson ([type]): [description]
+    """
     def __init__(self, path):
+        """[summary]
+
+        Args:
+            path ([type]): [description]
+        """
         super().__init__(path)
 
     def read_image_from_folder(self):
+        """[summary]
+        """
         self.dic = {}
         for folder, subfolder, files in os.walk(self.path):
             if len(subfolder) == 0:
@@ -98,15 +160,29 @@ class ConvertJsonFER(ConvertJson):
 
 
 class JsonReader:
-
+    """[summary]
+    """
     def __init__(self):
         self.json = None
 
-    def json_load(self, path):
+    def json_load(self, path: str):
+        """[summary]
+
+        Args:
+            path (str): [description]
+        """
         with open(path, "r") as f:
             self.json = json.load(f)
 
-    def get_json_from(self, path):
+    def get_json_from(self, path: str):
+        """[summary]
+
+        Args:
+            path (str): [description]
+
+        Returns:
+            [type]: [description]
+        """
         self.json_load(path)
         return self.json
 
@@ -122,6 +198,12 @@ class GetDataJsonKDEF:
         self.preprocess = Preprocessing()
 
     def add_value_to_key(self, key, value):
+        """[summary]
+
+        Args:
+            key ([type]): [description]
+            value ([type]): [description]
+        """
         try:
             self.minidict[key].append(value)
         except BaseException:
@@ -129,6 +211,8 @@ class GetDataJsonKDEF:
             self.minidict[key].append(value)
 
     def read_image_in_paths(self):
+        """[summary]
+        """
         for folder, subfolder, files in self.path_folder:
             if len(subfolder) == 0:
                 for file in files:
@@ -138,6 +222,12 @@ class GetDataJsonKDEF:
                     self.add_value_to_key(emotion, full_path)
 
     def save_to_json(self, root_path=".", name_to_save="temp.json"):
+        """[summary]
+
+        Args:
+            root_path (str, optional): [description]. Defaults to ".".
+            name_to_save (str, optional): [description]. Defaults to "temp.json".
+        """
         full_path = os.path.join(root_path, name_to_save)
         with open(full_path, "w") as file:
             json.dump(self.dict, file)
@@ -145,5 +235,10 @@ class GetDataJsonKDEF:
             self.path.get_full_path(full_path)))
 
     def get_json_from_image_path(self, name_file):
+        """[summary]
+
+        Args:
+            name_file ([type]): [description]
+        """
         self.read_image_in_paths()
         self.save_to_json(name_to_save=name_file)

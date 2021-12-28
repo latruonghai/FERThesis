@@ -1,7 +1,9 @@
 from .face_detect.svm_detect import Detect
 
 class DatasetProcess:
-    
+    """
+    [summary]
+    """
     def __init__(self):
         pass
 
@@ -24,6 +26,19 @@ class DatasetProcess:
         mouth_size=(
             76,
             48)):
+        """[summary]
+
+        Args:
+            data ([type]): [description]
+            save_data (bool, optional): [description]. Defaults to False.
+            visualize (bool, optional): [description]. Defaults to False.
+            quiet_mode (bool, optional): [description]. Defaults to True.
+            hog_bins (int, optional): [description]. Defaults to 9.
+            hog_pixel_cell (tuple, optional): [description]. Defaults to ( 16, 16).
+            hog_cell_block (tuple, optional): [description]. Defaults to ( 2, 2).
+            eye_size (tuple, optional): [description]. Defaults to ( 146, 48).
+            mouth_size (tuple, optional): [description]. Defaults to ( 76, 48).
+        """
         x_train, y_train = [], []
         det = Detect()
         for key, value in data.items():
@@ -47,4 +62,5 @@ class DatasetProcess:
 #                 print(img_value.shape)
                 x_train.append(hog_vec)
         print("Done, there is {} in this dataset".format(len(y_train)))
+        
         return np.array(x_train), np.array(y_train)

@@ -5,7 +5,10 @@ from skimage.feature import hog
 from skimage import exposure
 
 class Detect:
+    """[summary]
+    """
     def __init__(self):
+
         self.eye_cascade_ = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_lefteye_2splits.xml')
         self.face_cascade = cv2.CascadeClassifier(
@@ -15,7 +18,15 @@ class Detect:
 
     def detect_face(self, img, save=False, name_to_save="./temp/temp.jpg",
                     eye_size=(146, 48), mouth_size=(76, 48)):
+        """[summary]
 
+        Args:
+            img ([type]): [description]
+            save (bool, optional): [description]. Defaults to False.
+            name_to_save (str, optional): [description]. Defaults to "./temp/temp.jpg".
+            eye_size (tuple, optional): [description]. Defaults to (146, 48).
+            mouth_size (tuple, optional): [description]. Defaults to (76, 48).
+        """
         new_img = img.copy()
         faces = self.face_cascade.detectMultiScale(img)
 #         print(len(faces))
@@ -44,6 +55,13 @@ class Detect:
             raise Exception("Could not find face")
 
     def detect_eye(self, ori_img, face_img, eye_size=(146, 48)):
+        """[summary]
+
+        Args:
+            ori_img ([type]): [description]
+            face_img ([type]): [description]
+            eye_size (tuple, optional): [description]. Defaults to (146, 48).
+        """
         new_face_img = face_img.copy()
 #         print(new_face_img)
         eyes_list = []
@@ -64,6 +82,13 @@ class Detect:
         return ori_img, new_face_img, new_eye
 
     def mouth_region(self, ori_img, eye_region, mouth_size=(76, 48)):
+        """[summary]
+
+        Args:
+            ori_img ([type]): [description]
+            eye_region ([type]): [description]
+            mouth_size (tuple, optional): [description]. Defaults to (76, 48).
+        """
         new_mouth = ori_img.copy()
         x, y, x2, y2 = _get_coord(
             Coordinate(
@@ -101,6 +126,19 @@ class Detect:
         mouth_size=(
             76,
             48)):
+        """[summary]
+
+        Args:
+            path_img ([type]): [description]
+            visualize (bool, optional): [description]. Defaults to False.
+            save_data (bool, optional): [description]. Defaults to False.
+            quiet_mode (bool, optional): [description]. Defaults to True.
+            hog_bins (int, optional): [description]. Defaults to 9.
+            hog_pixel_cell (tuple, optional): [description]. Defaults to ( 16, 16).
+            hog_cell_block (tuple, optional): [description]. Defaults to ( 2, 2).
+            eye_size (tuple, optional): [description]. Defaults to ( 146, 48).
+            mouth_size (tuple, optional): [description]. Defaults to ( 76, 48).
+        """
         img = cv2.imread(path_img, cv2.IMREAD_GRAYSCALE)
         img = cv2.equalizeHist(img)
 #         clahe = cv2.createCLAHE(clipLimit=2, tileGridSize=(8, 8))

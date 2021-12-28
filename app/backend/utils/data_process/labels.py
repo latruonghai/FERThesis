@@ -1,10 +1,20 @@
 # from keras.metrics import Accuracy
 
 class TranslateLabel:
+    """[summary]
+    """
     def __init__(self, config):
         self.dictionary = config["dictionary"]
 
     def translate(self, label_array):
+        """[summary]
+
+        Args:
+            label_array ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         if isinstance(label_array, str):
             new_label = self.dictionary[label_array]
         else:
@@ -25,11 +35,21 @@ class TranslateLabel:
 
 
 class LabelProcessing:
+    """[summary]
+    """
     def __init__(self):
         #         self.y_true = None
         pass
 
     def label_dummies(self, true_label):
+        """[summary]
+
+        Args:
+            true_label ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         #         true_label = np.array(label * numOfSample)
         y_true = pd.get_dummies(true_label).to_numpy()
         print(y_true.shape)
@@ -46,5 +66,13 @@ class LabelProcessing:
 #         return y_pred
 
     def label_one_hot_encode(self, true_label):
+        """[summary]
+
+        Args:
+            true_label ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         true_label = self.label_dummies(true_label)
         return np.argmax(true_label, axis=1)
