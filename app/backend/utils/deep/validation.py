@@ -86,6 +86,15 @@ def plot_confusion_matrix(cm,
 
 
 def recall_m(y_true, y_pred):
+    """
+    Compute Recall metric.
+    Args:
+        y_true (np.array): ground-truth label
+        y_pred (np.array): predicted-label
+
+    Returns:
+        recall (tensor): recall score
+    """
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     recall = true_positives / (possible_positives + K.epsilon())
@@ -93,6 +102,15 @@ def recall_m(y_true, y_pred):
 
 
 def precision_m(y_true, y_pred):
+    """
+    Compute Precision metric.
+    Args:
+        y_true (np.array): ground-truth label
+        y_pred (np.array): predicted-label
+
+    Returns:
+        Precision (tensor): Precision score
+    """
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
     precision = true_positives / (predicted_positives + K.epsilon())
@@ -100,6 +118,15 @@ def precision_m(y_true, y_pred):
 
 
 def f1_m(y_true, y_pred):
+    """
+    Compute F1_score metric.
+    Args:
+        y_true (np.array): ground-truth label
+        y_pred (np.array): predicted-label
+
+    Returns:
+        F1_score (tensor): F1_score score
+    """
     precision = precision_m(y_true, y_pred)
     recall = recall_m(y_true, y_pred)
     return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
