@@ -40,20 +40,28 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && \
-    # apt-get install -y git && \
-    apt-get -y install cmake && \
-    apt-get install -y wget unzip && \
-    apt-get install -y --no-install-recommends software-properties-common libboost-all-dev libc6-dbg libgeos-dev python3-dev python3-pip python3-setuptools && \
-    apt-get install -y libjpeg-dev zlib1g-dev && \
-    apt-get install -y ffmpeg libsm6 libxext6 \
-    && apt-get clean \
-    && rm -rf /var/cache/apt/archives/* \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+# apt-get install -y git && \
+# apt-get -y install cmake && \
+# apt-get install -y wget unzip && \
+# apt-get install -y --no-install-recommends software-properties-common libboost-all-dev libc6-dbg libgeos-dev python3-dev python3-pip python3-setuptools && \
+# apt-get install -y libjpeg-dev zlib1g-dev && \
+# apt-get install -y ffmpeg libsm6 libxext6 \
+# && apt-get clean \
+# && rm -rf /var/cache/apt/archives/* \
+# rm -rf /var/lib/apt/lists/*
 
-COPY . /backend/
-RUN python3 -m pip install --upgrade pip
-RUN ls && pip3 install -r requirements.txt
+FROM python:3.7-alpine
+WORKDIR /code
+EXPOSE 8000
+# ENV FLASK_APP=app.py
+# ENV FLASK_RUN_HOST=127.0.0.1
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+# EXPOSE 5000
+COPY . /code/
+CMD ["python", "main.py"]
 
 # CMD [ "executable" ]
 
