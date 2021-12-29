@@ -41,7 +41,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && \
-    apt-get install -y git && \
+    # apt-get install -y git && \
     apt-get -y install cmake && \
     apt-get install -y wget unzip && \
     apt-get install -y --no-install-recommends software-properties-common libboost-all-dev libc6-dbg libgeos-dev python3-dev python3-pip python3-setuptools && \
