@@ -1,5 +1,5 @@
 tensorflow==2.6.0
-tensorflow-gpu=2.6.0
+tensorflow-gpu==2.6.0
 fastapi
 uvicorn==0.14.0
 face_library==1.1.3
