@@ -105,6 +105,15 @@ class DetectorModule:
         return faces, h, w
 
     def detect_face(self, image, gpu=1):
+        """[summary]
+
+        Args:
+            image ([type]): [description]
+            gpu (int, optional): [description]. Defaults to 1.
+
+        Returns:
+            [type]: [description]
+        """
         if gpu == 1:
             return self.detect_with_gpu(image)
         elif gpu == 0:

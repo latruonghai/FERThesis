@@ -17,9 +17,15 @@ from app.backend.utils.exceptions.detect_exception import NotFoundFaceImageError
 
 
 class FER:
-    
+    """[summary]
+    """
     def __init__(self, config, validate=False):
-        
+        """[summary]
+
+        Args:
+            config ([type]): [description]
+            validate (bool, optional): [description]. Defaults to False.
+        """
         self.labels = config["labels"]
         self.detector_module = DetectorModule(config)
         self.enmodel = EnsembleModel(config)
@@ -29,13 +35,25 @@ class FER:
 #             self.validate = validate
         
     def set_params_FL(self, scoreThreshold=0.85, iouThreshold=0.7):
-        
+        """[summary]
+
+        Args:
+            scoreThreshold (float, optional): [description]. Defaults to 0.85.
+            iouThreshold (float, optional): [description]. Defaults to 0.7.
+        """
         self.detector_module.set_params_FL(scoreThreshold, iouThreshold)
 
     def __set_dict_information__(self, **kwargs):
         return dict(kwargs)
     
     def face_recognition_with_gpu(self, img, quiet=True, size=(96, 96) ):
+        """[summary]
+
+        Args:
+            img ([type]): [description]
+            quiet (bool, optional): [description]. Defaults to True.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+        """
         # Face detection with dnn
         dic_face ={}
         start = time.time()
@@ -72,6 +90,14 @@ class FER:
 
     def face_recognition_with_face_lib(self, image, quiet=True, size=(96, 96) ):
 #         print("use lib")
+        """
+        face_recognition_with_face_lib [summary]
+
+        Args:
+            image ([type]): [description]
+            quiet (bool, optional): [description]. Defaults to True.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+        """
         dic_face = dict()
         img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         start = time.time()
@@ -100,6 +126,14 @@ class FER:
         return image, dic_face
     
     def face_recognition_with_cpu(self, image, quiet = False, size=(96, 96) ):
+        """
+        face_recognition_with_cpu [summary]
+
+        Args:
+            image ([type]): [description]
+            quiet (bool, optional): [description]. Defaults to False.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+        """
         # Face detection with haarcascade
         dic_face = dict()
         img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -129,8 +163,14 @@ class FER:
             raise NotFoundFaceImageError()
         return image, dic_face
     
-    def predict_face_emotion(self, face_image, size):
-        
+    def predict_face_emotion(self, face_image, size: tuple):
+        """
+        predict_face_emotion [summary]
+
+        Args:
+            face_image ([type]): [description]
+            size (tuple): [description]
+        """
         face_image = cv2.resize(face_image, size)
         # print(face_image.shape)
         face_image = face_image / 127.5
@@ -144,7 +184,20 @@ class FER:
         # end2 = time.time() - start
         return label, end2, score
     
-    def processing_image(self, img, gpu=1, quiet=False, resize = True, size=(96, 96)):
+    def processing_image(self, img, gpu=1, quiet=False, resize=True, size=(96,96)):
+        """
+        processing_image [summary]
+
+        Args:
+            img ([type]): [description]
+            gpu (int, optional): [description]. Defaults to 1.
+            quiet (bool, optional): [description]. Defaults to False.
+            resize (bool, optional): [description]. Defaults to True.
+            size (tuple, optional): [description]. Defaults to (96,96).
+
+        Returns:
+            [type]: [description]
+        """
         #     img = cv2.imread(path_image)
         if isinstance(img, str):
             img = cv2.imread(img)
@@ -164,12 +217,33 @@ class FER:
             return img, {} # cv2_imshow(img)
         
     def save_img(self, face, file_name="temp.jpg"):
+        """
+        save_img [summary]
+
+        Args:
+            face ([type]): [description]
+            file_name (str, optional): [description]. Defaults to "temp.jpg".
+        """
         file_name = file_name.split('.')[0]
         path_save = f'{file_name}_result1.jpg'
         cv2.imwrite(path_save, face)
         print(f'You saved images to the path {path_save}')
         
     def detect_emotion_with_image(self, img_path, show=True, gpu=1, save=False, quiet =True, size=(96, 96)):
+        """
+        detect_emotion_with_image [summary]
+
+        Args:
+            img_path ([type]): [description]
+            show (bool, optional): [description]. Defaults to True.
+            gpu (int, optional): [description]. Defaults to 1.
+            save (bool, optional): [description]. Defaults to False.
+            quiet (bool, optional): [description]. Defaults to True.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+
+        Returns:
+            [type]: [description]
+        """
         if gpu == 1 and not quiet:
             print("You are using gpu")
         elif gpu == 0 and not quiet:
@@ -188,6 +262,18 @@ class FER:
         return face, dict_face
     
     def detect_emotion_with_list_images(self, root_folder=".", show=False, gpu=1, validate=False, quiet=True, save=False, size=(96, 96)):
+        """
+        detect_emotion_with_list_images [summary]
+
+        Args:
+            root_folder (str, optional): [description]. Defaults to ".".
+            show (bool, optional): [description]. Defaults to False.
+            gpu (int, optional): [description]. Defaults to 1.
+            validate (bool, optional): [description]. Defaults to False.
+            quiet (bool, optional): [description]. Defaults to True.
+            save (bool, optional): [description]. Defaults to False.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+        """
         y_true, y_pred = [], []
         
         for image_path in os.listdir(root_folder):
@@ -215,6 +301,16 @@ class FER:
         print("Done")
         
     def validate(self, y_true, y_pred):
+        """
+        validate [summary]
+
+        Args:
+            y_true ([type]): [description]
+            y_pred ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
 #         y_true_score = self.label_process.label_one_hot_encode(y_true)
 #         y_pred_score = self.label_process.label_one_hot_encode(y_pred)
         y_true_score = np.array(y_true)
@@ -226,6 +322,15 @@ class FER:
         return score.result().numpy()
     
     def detect_emotion_with_vid(self, vid_path=0, gpu=True, quiet=True, size=(96, 96)):
+        """
+        detect_emotion_with_vid [summary]
+
+        Args:
+            vid_path (int, optional): [description]. Defaults to 0.
+            gpu (bool, optional): [description]. Defaults to True.
+            quiet (bool, optional): [description]. Defaults to True.
+            size (tuple, optional): [description]. Defaults to (96, 96).
+        """
         if gpu == 1:
             print("You are using gpu")
         elif gpu == 0:
@@ -273,26 +378,62 @@ class FER:
         # Destroy all the windows
         cv2.destroyAllWindows()
         
-    def get_base_detector(self, config):
+    def get_base_detector(self, config: dict):
+        """
+        get_base_detector [summary]
+
+        Args:
+            config (dict): [description]
+
+        Returns:
+            [type]: [description]
+        """
         modelFile = config["caffe_path"]
         configFile = config["config_path"]
         net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
         print("Loaded caffe and config file")
         return net
-    def calculate_fps(self, end):
+    def calculate_fps(self, end: float):
+        """
+        calculate_fps [summary]
+
+        Args:
+            end (float): [description]
+
+        Returns:
+            [type]: [description]
+        """
         fps = 1/end
         fps = str(int(np.ceil(fps)))
 
         return fps
 
 
-def read_image_from_byte(image_data) -> Image.Image:
+def read_image_from_byte(image_data):
+    """
+    read_image_from_byte [summary]
+
+    Args:
+        image_data ([type]): [description]
+
+    Returns:
+        Image.Image: [description]
+    """    
     image = Image.open(BytesIO(image_data))
     
     return image
 
 
-def decode_image(imgString):
+def decode_image(imgString: str):
+    """
+    decode_image [summary]
+
+    Args:
+        imgString (str): [description]
+
+    Returns:
+        [type]: [description]
+    """
     imgdata = base64.b64decode(imgString)
     image = read_image_from_byte(imgdata)
     
@@ -300,11 +441,29 @@ def decode_image(imgString):
     return cvtColor(image, COLOR_RGB2BGR)
 
 def convert_image_to_byte(img):
+    """
+    convert_image_to_byte [summary]
+
+    Args:
+        img ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     img = cvtColor(img, COLOR_BGR2RGB)
     
     return image_to_byte_array(Image.fromarray(img.astype('uint8')))
 
 def encode_image(img):
+    """
+    encode_image [summary]
+
+    Args:
+        img ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     im = convert_image_to_byte(img)
     
     byte_image = base64.b64encode(im)
@@ -312,11 +471,29 @@ def encode_image(img):
     return image_response(byte_image)
 
 def image_response(byte_image: bytes):
+    """
+    image_response [summary]
+
+    Args:
+        byte_image (bytes): [description]
+
+    Returns:
+        [type]: [description]
+    """
     send_image = byte_image.decode("UTF-8")
     
     return send_image
 
 def image_to_byte_array(image: Image):
+    """
+    image_to_byte_array [summary]
+
+    Args:
+        image (Image): [description]
+
+    Returns:
+        [type]: [description]
+    """
     
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format="PNG")
