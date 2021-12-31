@@ -74,11 +74,12 @@ class FER:
                 cv2.rectangle(img, (x, y), (x1, y1), (0, 0, 255), 2)
 #               
                 label, end2, pred_score = self.predict_face_emotion(face_image, size)
+                label = self.__handle_label(label, pred_score)
                 cv2.putText(img, f'{label}: {pred_score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(250,191,163) , 2)
 #                 end2 = time.time() - start
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x1, y1=y1,
-                    emotion=label, confidence=int(pred_score), time_predict=end2 + end,
+                    emotion=label, confidence=int(pred_score), time_predict=end2 ,
                     face_encode="data:image/jpeg;base64," + encode_image(face_image)
                 )
             else:
@@ -88,6 +89,9 @@ class FER:
 #         print(img.shape)
         return img, dic_face
 
+    def __handle_label(self, label, score):
+        return "Unknown" if score < 66 else label 
+    
     def face_recognition_with_face_lib(self, image, quiet=True, size=(96, 96) ):
 #         print("use lib")
         """
@@ -114,11 +118,12 @@ class FER:
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
                 label, end2, score = self.predict_face_emotion(face_image, size)
+                label = self.__handle_label(label, score)
                 cv2.putText(image, f'{label}:{score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (216,103,90), 2)
 #                 end2 = time.time() - start
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x+w, y1=y+h,
-                    emotion=label, confidence=int(score), time_predict=end2+end,
+                    emotion=label, confidence=int(score), time_predict=end2,
                     face_encode= "data:image/jpeg;base64," + encode_image(face_image)
                 )
         else:
@@ -151,11 +156,12 @@ class FER:
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
                 label, end2, score = self.predict_face_emotion(face_image, size)
+                label = self.__handle_label(label, score)
 #                 print(label)
                 cv2.putText(image, f'{label}:{score}', (x - 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (225,153,67), 2)
                 dic_face[i] = self.__set_dict_information__(
                     x=x, y=y, x1=x+w, y1=y+h,
-                    emotion=label, confidence=int(score), time_predict=end2+end,
+                    emotion=label, confidence=int(score), time_predict=end2,
                     face_encode="data:image/jpeg;base64," + encode_image(face_image)
                 )
 
