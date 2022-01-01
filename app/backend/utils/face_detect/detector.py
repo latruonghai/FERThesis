@@ -99,7 +99,7 @@ class DetectorModule:
         #     print(img.shape)
         h, w = img.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(img, (300, 300)), 1.0,
-                                     (300, 300), (104.0, 117.0, 123.0))
+                                    (300, 300), (104.0, 117.0, 123.0))
         self.net.setInput(blob)
         faces = self.net.forward()
         return faces, h, w

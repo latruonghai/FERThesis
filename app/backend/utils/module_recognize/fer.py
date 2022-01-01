@@ -12,6 +12,7 @@ from app.backend.utils.deep.ensemble_learning import EnsembleModel
 import base64
 from cv2 import COLOR_BGR2RGB, COLOR_RGB2BGR, cvtColor
 from app.backend.utils.exceptions.detect_exception import NotFoundFaceImageError
+from app.backend.utils.data_process.image_processing import clahe_equalize, standardize
 # from app.backend.utils.module_recognize.fer import encode_image
 
 
@@ -62,6 +63,7 @@ class FER:
         if not quiet:
             print(f"GPU Detected in {end}s")
         img_new = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # img_new = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         for i in range(faces.shape[2]):
             confidence = faces[0, 0, i, 2]
             if confidence > 0.5:
@@ -178,12 +180,15 @@ class FER:
             size (tuple): [description]
         """
         face_image = cv2.resize(face_image, size)
+        # face_image = cv2.equalizeHist(face_image)
+        # face_image = clahe_equalize(face_image)
+        # face_images = face_image.copy()
         # print(face_image.shape)
-        face_image = face_image / 127.5
-        face_image -= 1
+        face_image = standardize(face_image)
         face_image = np.expand_dims(np.array([face_image]), -1)
         # start = time.time()
         pred, score, end2 = self.enmodel.stacked_prediction(face_image)
+        # print("Predicted in ", end2)
     #             print(f'Predict in {time.time()-start}s')
         label = self.labels[pred[0]]
 #         print(label)

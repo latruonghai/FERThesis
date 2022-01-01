@@ -10,8 +10,7 @@ def generate_app():
     app = FastAPI()
 
     origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+        "*"
     ]
 
 
