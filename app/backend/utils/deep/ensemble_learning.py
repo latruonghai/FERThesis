@@ -85,6 +85,14 @@ class EnsembleModel:
 #         print(str(model_))
         return model_
 
+    def deep_predict(self, model_index=0, inputX=None):
+        s = time.time()
+        pred = self.members[model_index].predict(inputX)
+        start = time.time() - s
+        yhat = np.argmax(pred, axis=1)
+
+        return yhat, np.round(np.max(pred, axis=1) * 100, 2)[0], start
+
     def stacked_dataset(self, inputX):
         """
         Stack of predicted label from deep learning member models
@@ -96,7 +104,7 @@ class EnsembleModel:
             np.stack: stack of labels predicted from model in members (list of deep learning member)
         """
         stackX = None
-        for model in self.members:
+        for model in self.members[1:]:
             # make prediction
             yhat = model.predict(inputX, verbose=0)
             # stack predictions into [rows, members, probabilities]
