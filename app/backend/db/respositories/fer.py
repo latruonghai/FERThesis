@@ -22,8 +22,12 @@ def detect_face_with_image(file: FERRequest):
 
     image = decode_image(file.file)
     # image = cv2.equalizeHist(image)
+    method = file.method
+    deep_model = True if method > -1 else False 
     img, dic_face = fer.detect_emotion_with_image(
-        image, gpu=int(file.gpu), show=bool(file.show), processing=int(file.process))
+        image, gpu=int(file.gpu), show=bool(file.show), processing=int(file.process),
+        deep_model=deep_model, deep_index = int(method)
+        )
     # print(dic_face)
     imgcode = encode_image(img)
 

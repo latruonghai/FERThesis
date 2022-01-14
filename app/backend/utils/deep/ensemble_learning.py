@@ -88,6 +88,7 @@ class EnsembleModel:
     def deep_predict(self, model_index=0, inputX=None):
         s = time.time()
         pred = self.members[model_index].predict(inputX)
+        # print(pred)
         start = time.time() - s
         yhat = np.argmax(pred, axis=1)
 
@@ -130,7 +131,7 @@ class EnsembleModel:
         if not self.model:
             # create dataset using ensemble
             stackedX = self.stacked_dataset(inputX)
-            print(stackedX.shape, inputy.shape)
+            # print(stackedX.shape, inputy.shape)
             # fit standalone model
             inputy = np.argmax(inputy, axis=1)
             model = SVC()  # meta learner

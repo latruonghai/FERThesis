@@ -6,3 +6,4 @@ class FERRequest(BaseModel):
     show: bool = False
     file: str = ""
     process: int=0
+    method: int=-1  

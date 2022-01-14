@@ -80,7 +80,7 @@ class FER:
                 label = self.__handle_label(label, pred_score)
                 cv2.putText(
                     img,
-                    f'{label}: {pred_score}',
+                    f'{label}',
                     (x - 2,
                      y - 2),
                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -142,7 +142,7 @@ class FER:
                 label = self.__handle_label(label, score)
                 cv2.putText(
                     image,
-                    f'{label}:{score}',
+                    f'{label}',
                     (x - 2,
                      y - 2),
                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -201,7 +201,7 @@ class FER:
 #                 print(label)
                 cv2.putText(
                     image,
-                    f'{label}:{score}',
+                    f'{label}',
                     (x - 2,
                      y - 2),
                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -319,8 +319,8 @@ class FER:
         print(f'You saved images to the path {path_save}')
 
     def detect_emotion_with_image(self, img_path, show=True, gpu=1,
-                                  save=False, quiet=True, size=(96, 96),
-                                  processing=0, deep_model=True, deep_index=0):
+                                    save=False, quiet=True, size=(96, 96),
+                                    processing=0, deep_model=True, deep_index=0):
         """
         detect_emotion_with_image [summary]
 
